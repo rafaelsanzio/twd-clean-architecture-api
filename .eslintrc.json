@@ -10,5 +10,7 @@
 		"ecmaVersion": 13
 	},
 	"plugins": ["@typescript-eslint"],
-	"rules": {}
+	"rules": {
+		"indent": ["error", "tab"]
+	}
 }
