@@ -5,8 +5,8 @@ import { InMemoryUserRepository } from './in-memory-user-repository'
 describe('In menory User repository', () => {
   test('should return null if user is not found', async () => {
     const users: UserData[] = []
-    const userRepo: UserRepository = new InMemoryUserRepository(users)
-    const user = await userRepo.findUserByEmail('any@email.com')
+    const sut: UserRepository = new InMemoryUserRepository(users)
+    const user = await sut.findUserByEmail('any@email.com')
     expect(user).toBeNull()
   })
 
@@ -16,10 +16,10 @@ describe('In menory User repository', () => {
     const name = 'any_name'
     const email = 'any@email.com'
 
-    const userRepo = new InMemoryUserRepository(users)
-    await userRepo.add({ name, email })
+    const sut = new InMemoryUserRepository(users)
+    await sut.add({ name, email })
 
-    const user = await userRepo.findUserByEmail(email)
+    const user = await sut.findUserByEmail(email)
 
     expect(user.name).toBe(name)
   })
@@ -30,9 +30,9 @@ describe('In menory User repository', () => {
       { name: 'any_name2', email: 'any2@email.com' }
     ]
 
-    const userRepo = new InMemoryUserRepository(users)
+    const sut = new InMemoryUserRepository(users)
 
-    const returnedUsers = await userRepo.findAllUsers()
+    const returnedUsers = await sut.findAllUsers()
 
     expect(returnedUsers.length).toBe(2)
   })
