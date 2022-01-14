@@ -60,4 +60,22 @@ describe('Email validation', () => {
 
     expect(Email.validate(email)).toBeFalsy()
   })
+
+  test('should not accept local part with two dots', () => {
+    const email: string = 'any..email@mail.com'
+
+    expect(Email.validate(email)).toBeFalsy()
+  })
+
+  test('should not accept local part with endind dot', () => {
+    const email: string = 'any.@mail.com'
+
+    expect(Email.validate(email)).toBeFalsy()
+  })
+
+  test('should not accept email without an at-sign', () => {
+    const email: string = 'anymail.com'
+
+    expect(Email.validate(email)).toBeFalsy()
+  })
 })
