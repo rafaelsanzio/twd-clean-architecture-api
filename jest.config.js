@@ -1,13 +1,13 @@
 /* eslint-disable quotes */
 module.exports = {
-  roots: ["<rootDir>/src"],
-  coverageDirectory: "coverage",
-  collectCoverageFrom: ["<rootDir>/src/**/*.ts"],
-  testEnvironment: "node",
+  roots: ['<rootDir>/src'],
+  coverageDirectory: 'coverage',
+  collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!**/test/**', '!**/config/**'],
+  testEnvironment: 'node',
   transform: {
     // eslint-disable-next-line comma-dangle
-    "^.+\\.ts$": "ts-jest",
+    '^.+\\.ts$': 'ts-jest'
     // eslint-disable-next-line comma-dangle
-  },
+  }
   // eslint-disable-next-line semi
-};
+}
