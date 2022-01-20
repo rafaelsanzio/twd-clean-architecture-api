@@ -1,23 +1,22 @@
-import { left } from '../shared/either'
-import { InvalidEmailError } from './errors/invalid-email-error'
-import { InvalidNameError } from './errors/invalid-name-error'
 import { User } from './user'
 
 describe('User domain entity', () => {
   test('should not create user with invalid e-mail address', async () => {
     const invalidEmail = 'invalid_email'
-    const error = User.create({ name: 'any_name', email: invalidEmail })
+    const error = User.create({ name: 'any_name', email: invalidEmail }).value as Error
 
-    expect(error).toEqual(left(new InvalidEmailError()))
+    expect(error.name).toEqual('InvalidEmailError')
+    expect(error.message).toEqual(`Invalid Email: ${invalidEmail}.`)
   })
 
   test('should not create user with invalid names', async () => {
     const invalidNames = ['O      ', 'O'.repeat(257)]
 
     for (const invalidName of invalidNames) {
-      const error = User.create({ name: invalidName, email: 'any@mail.com' })
+      const error = User.create({ name: invalidName, email: 'any@mail.com' }).value as Error
 
-      expect(error).toEqual(left(new InvalidNameError()))
+      expect(error.name).toEqual('InvalidNameError')
+      expect(error.message).toEqual(`Invalid Name: ${invalidName}.`)
     }
   })
 
