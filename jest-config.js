@@ -8,6 +8,10 @@ module.exports = {
     // eslint-disable-next-line comma-dangle
     '^.+\\.ts$': 'ts-jest'
     // eslint-disable-next-line comma-dangle
-  }
+  },
   // eslint-disable-next-line semi
+  moduleNameMapper: {
+    '^@/(.*)$': '<rootDir>/src/$1',
+    '^@test/(.*)$': '<rootDir>/test/$1'
+  }
 }
