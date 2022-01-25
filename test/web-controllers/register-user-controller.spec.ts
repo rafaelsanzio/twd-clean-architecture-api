@@ -47,6 +47,17 @@ describe('Register user web controller', () => {
         email: 'any@mail.com'
       }
     }
+
+    const requestWithMissingEmail: HttpRequest = {
+      body: {
+        name: 'Any name'
+      }
+    }
+
+    const requestWithMissingAllParams: HttpRequest = {
+      body: {}
+    }
+
     const users: UserData[] = []
 
     const repo: UserRepository = new InMemoryUserRepository(users)
@@ -64,7 +75,13 @@ describe('Register user web controller', () => {
         error: InvalidEmailError,
         message: `Invalid Email: ${requestWithInvalidEmail.body.email}`
       },
-      { request: requestWithMissingName, error: MissingParamError, message: 'Missing parameter from request: name' }
+      { request: requestWithMissingName, error: MissingParamError, message: 'Missing parameter from request: name' },
+      { request: requestWithMissingEmail, error: MissingParamError, message: 'Missing parameter from request: email' },
+      {
+        request: requestWithMissingAllParams,
+        error: MissingParamError,
+        message: 'Missing parameter from request: name email'
+      }
     ]
 
     for (const { request, error, message } of testCases) {
