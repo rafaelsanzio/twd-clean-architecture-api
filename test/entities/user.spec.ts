@@ -6,7 +6,7 @@ describe('User domain entity', () => {
     const error = User.create({ name: 'any_name', email: invalidEmail }).value as Error
 
     expect(error.name).toEqual('InvalidEmailError')
-    expect(error.message).toEqual(`Invalid Email: ${invalidEmail}.`)
+    expect(error.message).toEqual(`Invalid Email: ${invalidEmail}`)
   })
 
   test('should not create user with invalid names', async () => {
@@ -16,7 +16,7 @@ describe('User domain entity', () => {
       const error = User.create({ name: invalidName, email: 'any@mail.com' }).value as Error
 
       expect(error.name).toEqual('InvalidNameError')
-      expect(error.message).toEqual(`Invalid Name: ${invalidName}.`)
+      expect(error.message).toEqual(`Invalid Name: ${invalidName}`)
     }
   })
 
