@@ -13,7 +13,7 @@ describe('Register user on mailing list use case', () => {
     const name = 'any_name'
     const email = 'any@email.com'
 
-    const response = await useCase.registerUserOnMailingList({ name, email })
+    const response = await useCase.perform({ name, email })
     const user = await repo.findUserByEmail(email)
 
     expect(user.name).toBe(name)
@@ -32,8 +32,7 @@ describe('Register user on mailing list use case', () => {
     ]
 
     for (const testCase of testCases) {
-      const response = (await useCase.registerUserOnMailingList({ name: testCase.name, email: testCase.email }))
-        .value as Error
+      const response = (await useCase.perform({ name: testCase.name, email: testCase.email })).value as Error
       const user = await repo.findUserByEmail(testCase.email)
 
       expect(user).toBeNull()
