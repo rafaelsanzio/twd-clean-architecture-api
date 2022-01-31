@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 module.exports = {
+  preset: '@shelf/jest-mongodb',
   roots: ['<rootDir>/test'],
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['<rootDir>/src/**/*.ts', '!**/test/**', '!**/config/**'],
