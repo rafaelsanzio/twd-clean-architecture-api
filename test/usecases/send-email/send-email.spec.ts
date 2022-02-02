@@ -1,4 +1,4 @@
-import { Either, Right, right } from '@/shared'
+import { Either, Left, Right, right } from '@/shared'
 import { MailServiceError } from '@/usecases/errors'
 import { SendEmail } from '@/usecases/send-email'
 import { EmailOptions, EmailService } from '@/usecases/send-email/ports'
@@ -39,13 +39,17 @@ class MailServiceStub implements EmailService {
 
 describe('Send email to user', () => {
   test('should email user cases', async () => {
-    // const testCases = [{ name: toName, email: toEmail, expected: true }]
+    const testCases = [
+      { name: toName, email: toEmail, expected: Right },
+      { name: toName, email: 'invalid_mail', expected: Left }
+    ]
 
     const mailServiceStub = new MailServiceStub()
     const usecase = new SendEmail(mailOptions, mailServiceStub)
 
-    const response = await usecase.perform({ name: toName, email: toEmail })
-
-    expect(response).toBeInstanceOf(Right)
+    for (const { name, email, expected } of testCases) {
+      const response = await usecase.perform({ name, email })
+      expect(response).toBeInstanceOf(expected)
+    }
   })
 })
