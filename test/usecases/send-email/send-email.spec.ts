@@ -1,4 +1,4 @@
-import { Either, Left, Right, right } from '@/shared'
+import { Either, left, Left, Right, right } from '@/shared'
 import { MailServiceError } from '@/usecases/errors'
 import { SendEmail } from '@/usecases/send-email'
 import { EmailOptions, EmailService } from '@/usecases/send-email/ports'
@@ -37,8 +37,14 @@ class MailServiceStub implements EmailService {
   }
 }
 
+class MailServiceErrorStub implements EmailService {
+  async send(emailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {
+    return left(new MailServiceError())
+  }
+}
+
 describe('Send email to user', () => {
-  test('should email user cases', async () => {
+  test('Send email to user cases', async () => {
     const testCases = [
       { name: toName, email: toEmail, expected: Right },
       { name: toName, email: 'invalid_mail', expected: Left }
@@ -51,5 +57,14 @@ describe('Send email to user', () => {
       const response = await usecase.perform({ name, email })
       expect(response).toBeInstanceOf(expected)
     }
+  })
+
+  test('should return error when email service fails', async () => {
+    const mailServiceErrorStub = new MailServiceErrorStub()
+    const usecase = new SendEmail(mailOptions, mailServiceErrorStub)
+
+    const response = await usecase.perform({ name: toName, email: toEmail })
+
+    expect(response.value).toBeInstanceOf(MailServiceError)
   })
 })
