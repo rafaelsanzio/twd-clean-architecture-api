@@ -1,4 +1,5 @@
-import { Either, left, Left, Right, right } from '@/shared'
+import { User } from '@/entities'
+import { Either, left, right } from '@/shared'
 import { MailServiceError } from '@/usecases/errors'
 import { SendEmail } from '@/usecases/send-email'
 import { EmailOptions, EmailService } from '@/usecases/send-email/ports'
@@ -45,25 +46,21 @@ class MailServiceErrorStub implements EmailService {
 
 describe('Send email to user', () => {
   test('Send email to user cases', async () => {
-    const testCases = [
-      { name: toName, email: toEmail, expected: Right },
-      { name: toName, email: 'invalid_mail', expected: Left }
-    ]
-
     const mailServiceStub = new MailServiceStub()
     const usecase = new SendEmail(mailOptions, mailServiceStub)
 
-    for (const { name, email, expected } of testCases) {
-      const response = await usecase.perform({ name, email })
-      expect(response).toBeInstanceOf(expected)
-    }
+    const user = User.create({ name: toName, email: toEmail }).value as User
+
+    const response = (await usecase.perform(user)).value as EmailOptions
+    expect(response.to).toEqual(`${toName} <${toEmail}>`)
   })
 
   test('should return error when email service fails', async () => {
     const mailServiceErrorStub = new MailServiceErrorStub()
     const usecase = new SendEmail(mailOptions, mailServiceErrorStub)
+    const user = User.create({ name: toName, email: toEmail }).value as User
 
-    const response = await usecase.perform({ name: toName, email: toEmail })
+    const response = await usecase.perform(user)
 
     expect(response.value).toBeInstanceOf(MailServiceError)
   })
