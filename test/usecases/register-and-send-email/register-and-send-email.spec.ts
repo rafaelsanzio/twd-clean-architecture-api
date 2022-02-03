@@ -1,4 +1,4 @@
-import { User, UserData } from '@/entities'
+import { UserData } from '@/entities'
 import { Either, right } from '@/shared'
 import { MailServiceError } from '@/usecases/errors'
 import { RegisterAndSendEmail } from '@/usecases/register-and-send-email'
@@ -45,7 +45,7 @@ class MailServiceMock implements EmailService {
 }
 
 describe('Register and send email to user', () => {
-  test('should add user with complete data to mailing list', async () => {
+  test('should register user and send an email with valid data', async () => {
     const users: UserData[] = []
 
     const repo: UserRepository = new InMemoryUserRepository(users)
@@ -61,15 +61,15 @@ describe('Register and send email to user', () => {
     const name = 'any_name'
     const email = 'any@email.com'
 
-    const response = (await registerAndSendEmailUsecase.perform({ name, email })).value as User
+    const response: UserData = (await registerAndSendEmailUsecase.perform({ name, email })).value as UserData
     const user = await repo.findUserByEmail(email)
 
     expect(user.name).toBe(name)
-    expect(response.name.value).toBe(name)
+    expect(response.name).toBe(name)
     expect(mailServiceMock.timeSendWasCalled).toBe(1)
   })
 
-  test('should not add user with invalid email or invalid name to mailing list', async () => {
+  test('should not register user and send an email with invalid data', async () => {
     const users: UserData[] = []
 
     const repo: UserRepository = new InMemoryUserRepository(users)
