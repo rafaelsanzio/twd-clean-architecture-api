@@ -19,24 +19,4 @@ describe('Register user on mailing list use case', () => {
     expect(user.name).toBe(name)
     expect(response.value.name).toBe(name)
   })
-
-  test('should not add user with invalid email or invalid name to mailing list', async () => {
-    const users: UserData[] = []
-
-    const repo: UserRepository = new InMemoryUserRepository(users)
-    const useCase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
-
-    const testCases = [
-      { name: 'any_name', email: 'invalid_email', error: 'InvalidEmailError' },
-      { name: '', email: 'any@mail.com', error: 'InvalidNameError' }
-    ]
-
-    for (const testCase of testCases) {
-      const response = (await useCase.perform({ name: testCase.name, email: testCase.email })).value as Error
-      const user = await repo.findUserByEmail(testCase.email)
-
-      expect(user).toBeNull()
-      expect(response.name).toEqual(testCase.error)
-    }
-  })
 })
