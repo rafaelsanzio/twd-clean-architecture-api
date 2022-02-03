@@ -5,15 +5,60 @@ import { RegisterUserOnMailingList } from '@/usecases/register-user-on-mailing-l
 import { UserRepository } from '@/usecases/register-user-on-mailing-list/ports'
 import { MissingParamError } from '@/web-controllers/errors'
 import { HttpRequest, HttpResponse } from '@/web-controllers/ports'
-import { RegisterUserController } from '@/web-controllers/register-user-controller'
+import { RegisterAndSendEmailController } from '@/web-controllers/register-user-controller'
 import { InMemoryUserRepository } from '@/usecases/register-user-on-mailing-list/repository'
+import { EmailOptions, EmailService } from '@/usecases/send-email/ports'
+import { MailServiceError } from '@/usecases/errors'
+import { Either, right } from '@/shared'
+import { SendEmail } from '@/usecases/send-email'
+import { RegisterAndSendEmail } from '@/usecases/register-and-send-email'
+
+const attachmentFilePath = '../resources/text.txt'
+const fromName = 'From Name'
+const fromEmail = 'from_email@mail.com'
+const toName = 'To Name'
+const toEmail = 'to_email@mail.com'
+const subject = 'Test e-mail'
+const emailBody = 'Hello world attachment test'
+const emailBodyHTML = '<b>Hello world attachment test</b>'
+const attachmment = [
+  {
+    filename: attachmentFilePath,
+    contentType: 'text/plain'
+  }
+]
+
+const mailOptions: EmailOptions = {
+  host: 'test',
+  port: 867,
+  username: 'test',
+  password: 'test',
+  from: `${fromName} <${fromEmail}>`,
+  to: `${toName} <${toEmail}>`,
+  subject,
+  text: emailBody,
+  html: emailBodyHTML,
+  attachmments: attachmment
+}
+
+class MailServiceStub implements EmailService {
+  async send(emailOptions: EmailOptions): Promise<Either<MailServiceError, EmailOptions>> {
+    return right(emailOptions)
+  }
+}
 
 describe('Register user web controller', () => {
   const users: UserData[] = []
-  const repo: UserRepository = new InMemoryUserRepository(users)
-  const usecase: UseCase = new RegisterUserOnMailingList(repo)
-  const controller: RegisterUserController = new RegisterUserController(usecase)
 
+  const repo: UserRepository = new InMemoryUserRepository(users)
+  const registerUsecase: RegisterUserOnMailingList = new RegisterUserOnMailingList(repo)
+
+  const mailServiceStub = new MailServiceStub()
+
+  const sendEmailUsecase: SendEmail = new SendEmail(mailOptions, mailServiceStub)
+  const registerAndSendEmailUsecase: RegisterAndSendEmail = new RegisterAndSendEmail(registerUsecase, sendEmailUsecase)
+
+  const controller: RegisterAndSendEmailController = new RegisterAndSendEmailController(registerAndSendEmailUsecase)
   class ErrorThrowingUseCaseStub implements UseCase {
     perform(request: any): Promise<void> {
       throw Error()
@@ -104,7 +149,7 @@ describe('Register user web controller', () => {
       }
     }
 
-    const controller: RegisterUserController = new RegisterUserController(errorThrowingUseCaseStub)
+    const controller: RegisterAndSendEmailController = new RegisterAndSendEmailController(errorThrowingUseCaseStub)
     const response: HttpResponse = await controller.handle(request)
 
     expect(response.statusCode).toEqual(500)
