@@ -11,7 +11,7 @@ export interface EmailOptions {
   readonly subject: string
   readonly text: string
   readonly html: string
-  readonly attachmments: Object[]
+  readonly attachments: Object[]
 }
 
 export interface EmailService {
