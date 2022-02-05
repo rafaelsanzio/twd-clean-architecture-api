@@ -22,7 +22,7 @@ export class NodemailerEmailService implements EmailService {
         subject: options.subject,
         text: options.text,
         html: options.html,
-        attachments: options.attachmments
+        attachments: options.attachments
       })
 
       return right(options)
