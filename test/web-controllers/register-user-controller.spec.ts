@@ -38,7 +38,7 @@ const mailOptions: EmailOptions = {
   subject,
   text: emailBody,
   html: emailBodyHTML,
-  attachmments: attachmment
+  attachments: attachmment
 }
 
 class MailServiceStub implements EmailService {
