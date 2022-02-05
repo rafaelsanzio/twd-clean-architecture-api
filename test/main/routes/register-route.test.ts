@@ -21,6 +21,6 @@ describe('Register route', () => {
       res.send()
     })
 
-    await request(app).post('/api/register').send({ name: 'Any name', email: 'any@mail.com' }).expect(201)
-  })
+    await request(app).post('/api/register').send({ name: 'Any name', email: 'any@mail.com' }).expect(200)
+  }, 2000)
 })
